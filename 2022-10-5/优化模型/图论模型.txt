@@ -1,0 +1,61 @@
+[a,b,c,d,e,f]=deal(1,2,3,4,5,6);%deal作用:把1~6赋值给a~f
+
+% a b c d e f
+
+w = [0 0 0 0 0 0 % a
+
+2 0 0 0 0 0 % b
+
+3 6 0 0 0 0 % c
+
+0 5 0 0 0 0 % d
+
+0 3 1 1 0 0 % e
+
+0 0 0 2 4 0]; % f
+
+W = sparse(w);%转成稀疏矩阵
+
+g=full(W);%转成满矩阵
+
+p=biograph(g,[],'ShowArrows','off','ShowWeights','on');
+
+h=view(p);%画出基础图
+
+%[dist,Path,pred] = graphshortestpath(W, d,a);%默认有向
+
+
+
+[Dist,Path] = graphshortestpath(W, 1, 6,'Directed',0)%Directed 后面的数字表示有向与否也可用true/false
+
+%将最短路径用红色标注
+
+set(h.Nodes(Path),'color',[1 0.4 0.4]);%结点
+
+edges=getedgesbynodeid(h,get(h.Nodes(Path),'ID'),get(h.Nodes(Path),'ID'));
+
+set(edges,'Linecolor',[1 0 0]);%弧
+
+set(edges,'LineWidth',2.0);
+
+n = length(lat);
+
+R = 6378.137;%地球半径
+
+dist = zeros(n);
+
+for i = 1:n
+
+for j = i+1:n
+
+dist(i,j) = distance(lat(i),lon(i), lat(j),lon(j), R);
+
+end
+
+end
+
+
+
+dist = dist + dist';
+
+[order,totdist] = minhamiltonpath(dist);
